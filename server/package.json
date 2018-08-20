@@ -1,6 +1,6 @@
 {
   "name": "thin-server",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A thin API layer",
   "main": "index.js",
   "repository": "https://github.com/expo/thin-api.git",
