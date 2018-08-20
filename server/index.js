@@ -1,16 +1,3 @@
-class Api {
-  addAsync(...args) {
-    let sum = 0;
-    for (let x of args) {
-      sum += x;
-    }
-    return sum;
-  }
-}
+let handler = require('./handler');
 
-module.exports = (impl) => {
-  let handler = (req, res) => {
-    
-
-  };
-};
+module.exports = handler;
