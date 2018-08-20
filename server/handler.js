@@ -25,7 +25,7 @@ module.exports = (apiImplementationClass) => {
       r.error = err;
     } else {
       try {
-        r.result = await m(...args);
+        r.result = await api[method + 'Async'](...args);
       } catch (e) {
         let err = {
           ...e,
@@ -43,9 +43,10 @@ module.exports = (apiImplementationClass) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(r);
+    let logArgs = api._logArgs || args;
     time.end(tk, 'api', {
       threshold: 0,
-      message: method + JSON.stringify(args),
+      message: method + JSON.stringify(logArgs),
     });
   };
 };
