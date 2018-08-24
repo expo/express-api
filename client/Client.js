@@ -9,10 +9,10 @@ class Client {
   }
 
   handleData(data) {
-
+    
   }
 
-  handleCommands() {
+  handleCommands(commands) {
 
   }
 

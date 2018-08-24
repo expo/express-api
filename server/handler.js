@@ -1,8 +1,16 @@
 let time = require('@expo/time');
 
-module.exports = (apiImplementationClass) => {
+module.exports = (apiImplementationClass, opts) => {
+  opts = {
+    timing: true,
+    ...opts,
+  };
+
   return async (req, res) => {
-    let tk = time.start();
+    let tk;
+    if (opts.timing) {
+      tk = time.start();
+    }
 
     let r = {
       data: null,
@@ -43,10 +51,14 @@ module.exports = (apiImplementationClass) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(r);
-    let logArgs = api._logArgs || args;
-    time.end(tk, 'api', {
-      threshold: 0,
-      message: method + JSON.stringify(logArgs),
-    });
+
+    if (opts.timing) {
+      let logArgs = api._logArgs || args;
+      time.end(tk, 'api', {
+        threshold: 0,
+        message: method + JSON.stringify(logArgs),
+      });
+    }
+
   };
 };
