@@ -1,20 +1,37 @@
-let fetch = require('node-fetch');
+let fetch = require('cross-fetch');
 
-class Client {
-  constructor(url, context) {
+let pkg = require('./package');
+
+let version = pkg.version;
+
+class ThinClient {
+  clientAgentString() {
+    let name = this.constructor.name || 'ThinClient';
+    return name + ';' + pkg.name + '/' + version;
+  }
+
+  clientSimpleMethods() {
+    return [];
+  }
+
+  constructor(url, context, opts) {
     this._url = url || 'http://localhost:8080/';
     this._context = context || {
-      client: 'ExampleClient',
+      agent: this.clientAgentString(),
     };
+    this._opts = Object.assign({}, opts);
+
+    // Install simple methods
+    for (let method of this.clientSimpleMethods()) {
+      this[method + 'Async'] = async (...args) => {
+        return await this.callAsync(method, ...args);
+      };
+    }
   }
 
-  handleData(data) {
-    
-  }
+  clientDidReceiveData(data) {}
 
-  handleCommands(commands) {
-
-  }
+  clientDidReceiveCommands(commands) {}
 
   async callAsync(method, ...args) {
     let response = await fetch(this._url, {
@@ -56,14 +73,17 @@ class Client {
       throw err;
     }
 
-    // Handle data stuff
-    this.handleData(r.data);
+    if (r.data) {
+      this.clientDidReceiveData(r.data);
+    }
 
     // Handle commands
-    this.handleCommands(r.commands);
+    if (r.commands) {
+      this.clientDidReceiveCommands(r.commands);
+    }
 
     return r.result;
   }
 }
 
-module.exports = Client;
+module.exports = ThinClient;

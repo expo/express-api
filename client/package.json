@@ -1,14 +1,15 @@
 {
   "name": "thin-client",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A client for the thin API protocol",
-  "main": "Client.js",
+  "main": "ThinClient.js",
   "repository": "https://github.com/expo/thin-api",
   "author": "Charlie Cheever <ccheever@gmail.com>",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "project-repl": "^1.4.3"
+  },
   "dependencies": {
-    "node-fetch": "^2.2.0",
-    "project-repl": "^1.4.1"
+    "cross-fetch": "^2.2.2"
   }
 }
