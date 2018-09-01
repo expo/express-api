@@ -16,6 +16,7 @@ module.exports = (apiImplementationClass, opts) => {
       data: null,
       error: null,
       clientError: null,
+      warnings: null,
       result: null,
       commands: null,
     };
