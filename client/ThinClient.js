@@ -10,34 +10,44 @@ class ThinClient {
     return name + ';' + pkg.name + '/' + version;
   }
 
-  clientSimpleMethods() {
-    return [];
-  }
-
-  constructor(url, context, opts) {
-    this._url = url || 'http://localhost:8080/';
-    this._context = context || {
-      agent: this.clientAgentString(),
-    };
-    this._opts = Object.assign({}, opts);
-
-    // Install simple methods
-    for (let method of this.clientSimpleMethods()) {
+  clientAddSimpleMethods(...args) {
+    for (let method of args) {
       this[method + 'Async'] = async (...args) => {
         return await this.callAsync(method, ...args);
       };
     }
   }
 
+  constructor(url, context, opts) {
+    this.url = url || 'http://localhost:8080/';
+    this.context = context || {
+      agent: this.clientAgentString(),
+    };
+    this.opts = Object.assign({}, opts);
+
+    // Install simple methods
+    this.clientAddSimpleMethods(...this.clientSimpleMethods());
+  }
+
+  clientSimpleMethods() {}
+
   clientDidReceiveData(data) {}
 
-  clientDidReceiveCommands(commands) {}
+  clientDidReceiveCommand(command) {}
+
+  clientDidReceiveWarning(code, message) {
+    console.warn('API Response Warning: ' + code + ': ' + message);
+  }
 
   async callAsync(method, ...args) {
-    let response = await fetch(this._url, {
+    if (method.startsWith('client') || method.startsWith('_')) {
+      throw new Error('Method name not allowed: ' + method);
+    }
+
+    let response = await fetch(this.url, {
       method: 'POST',
       body: JSON.stringify({
-        context: this._context,
+        context: this.context,
         method,
         args,
       }),
@@ -79,7 +89,15 @@ class ThinClient {
 
     // Handle commands
     if (r.commands) {
-      this.clientDidReceiveCommands(r.commands);
+      for (let command of r.commands) {
+        this.clientDidReceiveCommand(command);
+      }
+    }
+
+    if (r.warnings) {
+      for (let [code, message] of r.warnings) {
+        this.clientDidReceiveWarning(code, message);
+      }
     }
 
     return r.result;

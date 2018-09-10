@@ -11,6 +11,39 @@ class ExampleApi {
     }
     return sum;
   }
+
+  warnAsync(...args) {
+    for (let message of args) {
+      this.responseAddWarning('TEST_WARNING', 'Echoing back: ' + message);
+    }
+    return args.length;
+  }
+
+  sendDataAsync(...args) {
+    let n = 0;
+    for (let i = 0; i < args.length; i += 2) {
+      let key = args[i];
+      let value = args[i + 1];
+      this.responseAddData(key, value);
+      n++;
+    }
+    return n;
+  }
+
+  noopAsync() {}
+
+  sendCommandsAsync(...args) {
+    for (let command of args) {
+      this.responseAddCommand(command);
+    }
+  }
+
+  reverseAsync(s) {
+    return s
+      .split('')
+      .reverse()
+      .join('');
+  }
 }
 
 async function mainAsync() {

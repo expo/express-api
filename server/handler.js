@@ -22,8 +22,24 @@ module.exports = (apiImplementationClass, opts) => {
     };
 
     let { method, args, context } = req.body;
+    // console.log('start ' + method);
     let api = new apiImplementationClass();
     api._context = context;
+    api.responseAddWarning = (code, message) => {
+      r.warnings = r.warnings || [];
+      r.warnings.push([code, message]);
+    };
+
+    api.responseAddData = (key, value) => {
+      r.data = r.data || {};
+      r.data[key] = value;
+    };
+
+    api.responseAddCommand = (command) => {
+      r.commands = r.commands || [];
+      r.commands.push(command);
+    };
+
     let m = api[method + 'Async'];
     if (!m) {
       let err = {
@@ -60,6 +76,5 @@ module.exports = (apiImplementationClass, opts) => {
         message: method + JSON.stringify(logArgs),
       });
     }
-
   };
 };
