@@ -24,7 +24,7 @@ module.exports = (apiImplementationClass, opts) => {
     let { method, args, context } = req.body;
     // console.log('start ' + method);
     let api = new apiImplementationClass();
-    api._context = context;
+    api.context = context;
     api.responseAddWarning = (code, message) => {
       r.warnings = r.warnings || [];
       r.warnings.push([code, message]);
@@ -52,6 +52,7 @@ module.exports = (apiImplementationClass, opts) => {
       try {
         r.result = await api[method + 'Async'](...args);
       } catch (e) {
+        console.error('Internal Server Error', e);
         let err = {
           ...e,
           message: e.message,
@@ -61,7 +62,11 @@ module.exports = (apiImplementationClass, opts) => {
         if (e.isClientError) {
           r.clientError = err;
         } else {
-          r.error = err;
+          r.error = {
+            message: 'API Server Error',
+            type: e.type || 'API_SERVER_ERROR',
+            code: e.code || 'UNKNOWN',
+          };
         }
       }
     }
