@@ -1,10 +1,10 @@
 {
   "name": "thin-server",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A thin API layer",
   "main": "index.js",
   "repository": "https://github.com/expo/thin-api.git",
-  "author": "Charlie Cheever <ccheever@gmail.com>",
+  "author": "Charlie Cheever <ccheever@expo.io>",
   "license": "MIT",
   "repl": {
     "devDependencies": true,
